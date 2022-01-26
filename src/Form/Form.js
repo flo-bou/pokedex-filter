@@ -8,16 +8,15 @@ function Form(props) {
     };
 
     return (
-        <div className="mb-3">
+        <div className="my-5">
             <p className="my-3">
-                Choisissez les pokémons à afficher :
+                Chose pokémons to display :
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 my-3">
 
                 <select name="generation" id="generation" className="border rounded p-1" onChange={ () => sendSelection('generation') }>
                     <option value="void">Per generation</option>
-                    {/* {console.log('props.entriesInCategory : ', props.entriesInCategory)} */}
                     {props.entriesInCategory['generation'].map( (entry) => {
                         return (
                             <option value={entry} key={'generation' + entry}>
@@ -27,11 +26,11 @@ function Form(props) {
                     })}
                 </select>
 
-                <select name="type" id="type" className="border rounded p-1" onChange={ () => sendSelection('type') }>
-                    <option value="void">Per type</option>
-                    {props.entriesInCategory['type'].map( (entry) => {
+                <select name="pokemon-color" id="pokemon-color" className="border rounded p-1" onChange={ () => sendSelection('pokemon-color') }>
+                    <option value="void">Per color</option>
+                    {props.entriesInCategory['pokemon-color'].map( (entry) => {
                         return (
-                            <option value={entry} key={'type' + entry}>
+                            <option value={entry} key={'pokemon-color' + entry}>
                                 {entry}
                             </option>
                         );

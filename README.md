@@ -10,12 +10,12 @@ To run the project, follow those steps :
 
 2 : clone/copy the project on your computer
 
-3 : install dependancies. In your local copy of the project, run the command :
+3 : install dependencies. In your local copy of the project, run the command :
 ```
 npm install
 ```
 
-4 : The run the app with the command :
+4 : Then run the app using the command :
 ```
 npm start
 ```

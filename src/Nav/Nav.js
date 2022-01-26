@@ -13,10 +13,10 @@ class Nav extends React.Component {
 
     render() {
         return (
-			<header className="mb-5">
+			<header className="mb-5 px-3 md:px-8">
 				<nav className="container mx-auto flex justify-between py-5">
 					<p className='text-2xl'>
-						Welcome to the pokedex !
+						Welcome to the pokedex filter!
 					</p>
 				</nav>
 			</header>

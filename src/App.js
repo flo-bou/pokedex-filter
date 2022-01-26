@@ -11,35 +11,35 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.requestEntriesInCategory = this.requestEntriesInCategory.bind(this);
-		this.requestPokemonsOfEntry = this.requestPokemonsOfEntry.bind(this);
+		this.requestPokemonNamesOfEntry = this.requestPokemonNamesOfEntry.bind(this);
 		this.generateFinalList = this.generateFinalList.bind(this);
 		this.sendRequestedCategory = this.sendRequestedCategory.bind(this);
 		this.state = {
             categoryNames: [ // strings of categories name
                 'pokemon-shape',
                 'pokemon-habitat',
-                'type',
+                'pokemon-color',
                 'generation'
             ],
 			entriesInCategory:{ // arrays of every entries in categories, to send to Form Component
 				'pokemon-shape': [],
 				'pokemon-habitat': [],
-				'type': [],
+				'pokemon-color': [],
 				'generation': []
 			},
 			reqPokemon: {  // strings of requested values in each category, send by Form component
-				"pokemon-shape": null,
-				'pokemon-habitat': null,
-				'type': null,
-				'generation': null
+				"pokemon-shape": 'void',
+				'pokemon-habitat': 'void',
+				'pokemon-color': 'void',
+				'generation': 'void'
 			},
 			dataPokemon: {  // arrays of pokemons corresponding to requested entries in category, used to generate cards
 				"pokemon-shape": [],
 				'pokemon-habitat': [],
-				'type': [],
+				'pokemon-color': [],
 				'generation': []
 			},
-			finalList: []
+			finalList: [] // filtered list
 		};
     }
 
@@ -51,7 +51,7 @@ class App extends React.Component {
 
 				<Nav />
 
-				<main className="container mx-auto my-4">
+				<main className="container mx-auto my-4 px-3 md:px-8">
 
 					<Form
 						categoryNames={this.state.categoryNames}
@@ -59,12 +59,13 @@ class App extends React.Component {
 						sendRequestedCategory={this.sendRequestedCategory}
 					/>
 
-					<div className="mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-3">
+					<div className="mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 my-5">
 
 						{this.state.finalList.map((value) => {
 							return (
 								<Card
 									name={value}
+									key={value}
 									// flavor_text={value.flavor_text_entries[0].flavor_text}
 								/>
 							);
@@ -83,9 +84,9 @@ class App extends React.Component {
 
     componentDidMount(){
         this.requestEntriesInCategory('generation');
-        // this.requestEntriesInCategory('type');
-        // this.requestEntriesInCategory('pokemon-shape');
-        // this.requestEntriesInCategory('pokemon-habitat');
+        this.requestEntriesInCategory('pokemon-color');
+        this.requestEntriesInCategory('pokemon-shape');
+        this.requestEntriesInCategory('pokemon-habitat');
 	}
 
 	componentDidUpdate(){
@@ -108,7 +109,7 @@ class App extends React.Component {
 					prevState.entriesInCategory[request] = listOfEntries;
 					return prevState;
 				}, () => {
-                console.log('State after request for ', request, ' : ', this.state);
+                console.log('State after requestEntriesInCategory for ', request, ' : ', this.state);
             });
             return data;
         })
@@ -119,62 +120,76 @@ class App extends React.Component {
         });
     }
 
-	requestPokemonsOfEntry(request, entry, jsonPath){
-        fetch("https://pokeapi.co/api/v2/" + request)
+	requestPokemonNamesOfEntry(entry, category){
+        fetch("https://pokeapi.co/api/v2/" + entry)
         .then( responseObject => {
             return responseObject.json();
         })
         .then( data => {
-            // console.log('Datas for ', request, ' : ', data);
+            // console.log('Datas for ', entry, ' : ', data);
             let listOfPokemons = data.pokemon_species.map((value) => value.name);
 			// console.log('listOfPokemons : ', listOfPokemons);
-            this.setState( (prevState, props) => {
-					prevState.dataPokemon[entry] = listOfPokemons;
+            this.setState( (prevState) => {
+					prevState.dataPokemon[category] = listOfPokemons;
 					return prevState;
 				}, () => {
-                console.log('State after request Entry for ', request, ' : ', this.state);
+                console.log('State after requestPokemonNamesOfEntry for ', entry, ' : ', this.state);
             });
             return data;
         })
-        .catch( error => {
-            console.error(request, error);
-            console.error("fetch from PokeAPI failed :( during request ", request)
-            return [];
-        })
-		.finally(() => {
+		.then( data => {
 			// console.log('Generating final list to display');
-			this.generateFinalList();
-		});
+			this.generateFinalList(category);
+			return data;
+		})
+        .catch( error => {
+            console.error(entry, error);
+            console.error("fetch from PokeAPI failed :( during request ", entry)
+            return [];
+        });
     }
 
 	// get categories requests from Form component
-	sendRequestedCategory(categoryName, entryChosen){
-		this.setState( (prevState, props) => {
-			prevState.reqPokemon[categoryName] = entryChosen;
-			return prevState;
+	sendRequestedCategory(category, entryChosen){
+		if (entryChosen!=="void"){
+			this.requestPokemonNamesOfEntry(category + '/' + entryChosen, category);
+		} else{
+			this.setState( (prevState) => {
+				prevState.dataPokemon[category] = [];
+				return prevState;
+			}, () => {
+				this.generateFinalList(category);
+			});
 		}
-		, () => {
-			// console.log('state value in App after sendRequestedCategory for  : ', entryChosen, ' : ', this.state);
-			this.requestPokemonsOfEntry('generation/generation-i', 'generation');
-		})
+		this.setState( (prevState) => {
+			prevState.reqPokemon[category] = entryChosen;
+			return prevState;
+		});
 	}
 
 	generateFinalList(){
 		// parcourir l'objet dataPokemon, pour les entrées non vide, chercher les correspondances puis mettre le tableau filtré dans state
-		// const dataObject = this.state.dataPokemon;
+		// JSON.parse and JSON.stringify can make deep copies
+		// numbersCopy = JSON.parse(JSON.stringify(nestedNumbers));
 		let pokemonShape = this.state.dataPokemon['pokemon-shape'];
 		let pokemonHabitat = this.state.dataPokemon['pokemon-habitat'];
-		let type = this.state.dataPokemon.type;
-		let generation = this.state.dataPokemon.generation;
-		// console.log(type, generation);
-		for (let prop in dataObject){
-			if (prop!==[]){
+		let pokemonColor = this.state.dataPokemon['pokemon-color'];
+		let generation = this.state.dataPokemon['generation'];
 
+		let intersections = [];
+
+		for (let entry of [pokemonShape, pokemonHabitat, pokemonColor, generation]) {
+			if (entry.length!==0){
+				if (intersections.length===0){
+					intersections = entry.slice();
+				} else {
+					intersections = intersections.filter( element => entry.includes(element));
+				}
 			}
 		}
 
 		this.setState((prevState) => {
-			prevState.finalList = prevState.dataPokemon.generation;
+			prevState.finalList = intersections;
 			return prevState;
 		}, () => {
 			console.log('State after generateFinalList :', this.state);
