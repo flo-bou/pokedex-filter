@@ -2,6 +2,7 @@
   "name": "api-pokedex",
   "description": "an app about pokeAPI and React",
   "version": "0.3.0",
+  "homepage": "/name-of-your-project-on-github/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
