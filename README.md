@@ -1,6 +1,13 @@
 # My Pokedex !
 
+## Description
 My Pokedex is a practical exercice about using web APIs, React and Tailwind.
+
+Every data in this project (from category filters to pokemons images) comes from live calls to the [PokéAPI](https://pokeapi.co/).
+
+## Demo
+
+You can try the project with this [live demo](https://flo-bou.github.io/pokedex-filter/)
 
 ## Run
 
@@ -24,11 +31,14 @@ npm start
 
 The app should start on the page [http://localhost:3000](http://localhost:3000) in your web browser.
 
-## Licence 
+## Technologies
 
 The project uses the following technologies :
 * nodeJs 
-* [Create React App](https://github.com/facebook/create-react-app).
 * React
+* [Create React App](https://github.com/facebook/create-react-app).
 * [PokéAPI](https://pokeapi.co/)
 * Tailwind
+
+## Licence
+MIT

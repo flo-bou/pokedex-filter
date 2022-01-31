@@ -59,6 +59,8 @@ class App extends React.Component {
 						sendRequestedCategory={this.sendRequestedCategory}
 					/>
 
+					<hr className='my-5' />
+
 					<div className="mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 my-5">
 
 						{this.state.finalList.map((value) => {
@@ -74,8 +76,13 @@ class App extends React.Component {
 				</main>
 
 				<footer className="bg-slate-200 mt-5">
-					<div className="container mx-auto p-4">
-						Footer
+					<div className="container mx-auto p-4 flex flex-col">
+						<p className="text-center">
+							Project by <a href="http://www.florent-b.fr/" className='no-underline text-cyan-500 hover:underline hover:text-cyan-400'>Florent B</a>
+						</p>
+						<p className="text-center">
+							Code & infos on <a href="https://github.com/flo-bou/pokedex-filter" className='no-underline text-cyan-500 hover:underline hover:text-cyan-400'>GitHub</a>
+						</p>
 					</div>
 				</footer>
 			</div>
@@ -188,6 +195,8 @@ class App extends React.Component {
 			}
 		}
 
+		intersections.sort();
+
 		this.setState((prevState) => {
 			prevState.finalList = intersections;
 			return prevState;
@@ -195,6 +204,10 @@ class App extends React.Component {
 			console.log('State after generateFinalList :', this.state);
 		});
 	}
+
+	// ordering(arrayOfStrings){
+
+	// }
 
 	displayPokemons(pokemons){
 		// faire une requête sur la première entrée

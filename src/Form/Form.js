@@ -10,7 +10,7 @@ function Form(props) {
     return (
         <div className="my-5">
             <p className="my-3">
-                Chose pokémons to display :
+                Choose pokémons to display :
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 my-3">
